@@ -1,0 +1,30 @@
+name: support-tickets
+model: jev-latest
+state_field: text
+questions:
+  department:
+    type: choice
+    instructions: Which team should handle this
+    criteria:
+      billing: Payment or subscription issues
+      technical: Bugs or integration problems
+      sales: Pricing or account questions
+      other: Everything else
+  frustration:
+    type: score
+    instructions: How frustrated the customer appears
+    criteria:
+      - Calm, just stating facts
+      - Frustrated but civil
+      - Very angry, strong language
+  is_urgent:
+    type: noul
+    instructions: The message conveys urgency or time-sensitivity
+routes:
+  # evaluated in order; first match wins
+  - when: "confidence < 0.45"
+    route: review
+  - when: "urgency >= 0.85 or frustration >= 1.6"
+    route: escalate
+  - when: "true"
+    route: auto

@@ -1,0 +1,28 @@
+name: social-reply-gate
+model: jev-latest
+state_fields: [platform, draft]
+brand: >
+  Account voice: blunt, casual Twitter founder building Arnie (GTM).
+  Good replies are short, human, useful, slightly messy.
+  Bad: spam, hard sell, engagement bait, generic great post.
+questions:
+  is_spammy:
+    type: noul
+    instructions: This draft is spammy, pitchy, or engagement-bait
+  is_useful:
+    type: noul
+    instructions: This draft adds a real, specific point to the conversation
+  on_brand:
+    type: score
+    instructions: How well this matches the brand voice
+    criteria:
+      - Off-brand or corporate/AI-slop
+      - Mostly fine but a bit stiff
+      - Sounds like a sharp casual founder on Twitter
+routes:
+  - when: "spam >= 0.65"
+    route: block
+  - when: "useful < 0.4 or on_brand < 0.35"
+    route: rewrite
+  - when: "true"
+    route: post
